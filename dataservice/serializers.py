@@ -1,12 +1,22 @@
-
 from rest_framework import serializers
+from .models import Course, Student, Teacher
 
-from .models import Language
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = '__all__'
 
-class LanduageSerializers(serializers.Serializer):
-    name = serializers.CharField(max_length=100)
-    favrate_word = serializers.CharField(max_length=100,null=True,blank=True)
-    populations = serializers.PositiveIntegerField(blank=True,default=0)
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = '__all__'
 
-    def create(self, validated_data):
-        return Language.objects.create(**validated_data)
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['course'] = CourseSerializer(Course.objects.filter(enrollment__student__id=instance.id), many=True).data
+        return ret
+
+class TeacherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Teacher
+        fields = '__all__'

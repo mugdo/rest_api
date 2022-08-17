@@ -113,34 +113,26 @@ class Student(models.Model):
 
 class Course(models.Model):
     title = models.CharField(max_length=250)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    exam_date = models.DateField()
     def __str__(self) -> str:
         return self.title
 
 class Enrollmet(models.Model):
     student = models.ForeignKey(Student,on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollment')
     result = models.CharField(max_length=20,blank=True,null=True)
     date = models.DateField(auto_now_add=True)
 
-
 class Attendance(models.Model):
-    course = models.ForeignKey(Course, related_name='attendance', on_delete=models.CASCADE)
-    student = models.ManyToManyField(Student,related_name='attendance')
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True)
 
     def __str__(self) -> str:
         return '{}, {}'.format(self.course, self.date)
 
-class Exam(models.Model):
-    course = models.ForeignKey(Course, related_name='exam', on_delete=models.CASCADE)
-    start_date = models.DateField(default=date.today)
 
-
-class Questions(models.Model):
-    course = models.ForeignKey(Course,related_name='questions', on_delete=models.CASCADE)
-    Total_mark = models.PositiveIntegerField(null=True)
-    date = models.DateField(auto_now_add=True)
-    quiz = models.ManyToManyField('Quiz')
+   
 
 class Quiz(models.Model):
     question = models.CharField(max_length=200,null=True)
@@ -149,4 +141,12 @@ class Quiz(models.Model):
     option_3 = models.CharField(max_length=200,null=True)
     option_4 = models.CharField(max_length=200,null=True)
     answer = models.CharField(max_length=200,null=True)
+    
+class Questions(models.Model):
+    course = models.ForeignKey(Course,related_name='questions', on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, related_name='questions', on_delete=models.CASCADE)
+    date = models.DateField(auto_now_add=True)
+    
+
+
     
