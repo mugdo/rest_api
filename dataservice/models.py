@@ -126,7 +126,9 @@ class Enrollmet(models.Model):
 
 class Attendance(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course,related_name='attendance', on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True)
+    attend = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return '{}, {}'.format(self.course, self.date)
